@@ -1,36 +1,39 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.base')
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+@section('body')
+<div class="d-flex min-vh-100">
+    <aside class="sidebar offcanvas-lg offcanvas-start text-white p-3 flex-shrink-0" tabindex="-1" id="sidebar">
+        <div class="d-flex align-items-center mb-4 px-2">
+            <i class="bi bi-mortarboard-fill fs-3 me-2"></i>
+            <span class="fw-semibold fs-5">Campus Records</span>
+            <button type="button" class="btn-close btn-close-white ms-auto d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar"></button>
         </div>
-    </body>
-</html>
+        <ul class="nav nav-pills flex-column gap-1 mb-auto">
+            <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li><a href="{{ route('students.index') }}" class="nav-link {{ request()->routeIs('students.*') ? 'active' : '' }}"><i class="bi bi-people"></i> Students</a></li>
+            <li><a href="{{ route('subjects.index') }}" class="nav-link {{ request()->routeIs('subjects.*') ? 'active' : '' }}"><i class="bi bi-journal-bookmark"></i> Subjects</a></li>
+            <li><a href="{{ route('enrollments.index') }}" class="nav-link {{ request()->routeIs('enrollments.*') ? 'active' : '' }}"><i class="bi bi-card-checklist"></i> Enrollments</a></li>
+            <li><a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="bi bi-person-gear"></i> Users</a></li>
+        </ul>
+        <hr class="border-secondary">
+        <div class="px-2 small text-white-50 mb-2">Signed in as<br><span class="text-white">{{ auth()->user()->name }}</span></div>
+        <form method="POST" action="{{ route('logout') }}">@csrf
+            <button class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right me-1"></i> Log out</button>
+        </form>
+    </aside>
+
+    <div class="flex-grow-1 main-wrap">
+        <header class="d-lg-none bg-white border-bottom px-3 py-2 d-flex align-items-center">
+            <button class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle="offcanvas" data-bs-target="#sidebar"><i class="bi bi-list"></i></button>
+            <strong>Campus Records</strong>
+        </header>
+        <main class="p-3 p-md-4">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle me-1"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            @endif
+            @yield('content')
+        </main>
+    </div>
+</div>
+@endsection
